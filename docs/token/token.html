@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+  
+<html>
+  <head>
+    <script src="index.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.5.2/dist/web3.min.js"></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>$DKEY</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+    <link rel="icon" type="image/x-icon" href="key.png" />
+  </head>
+  <body>
+    <div id="terminal">
+      <a id="before"></a>
+    </div>
+    <div id="command" onclick="$('texter').focus();">
+      <textarea
+        type="text"
+        id="texter"
+        onkeyup="typeIt(this, event)"
+        onkeydown="typeIt(this, event); 
+                   moveIt(this.value.length, event)"
+        onkeypress="typeIt(this, event);"
+        autofocus
+      ></textarea>
+      <div id="liner">
+        <span id="typer"></span><b class="cursor" id="cursor">█</b>
+      </div>
+    </div>
+    <div class="fullscreen-dropzone" id="dropzone"></div>
+    <script>
+        // style/functions stolen from https://fkcodes.com/
+        function $(elid) {
+            return document.getElementById(elid);
+        }
+        
+        var cursor;
+        window.onload = init;
+
+        function init() {
+        cursor = $("cursor");
+        cursor.style.left = "0px";
+        }
+
+        function nl2br(txt) {
+        return txt.replace(/\n/g, '');
+        }
+
+        function typeIt(from, e) {
+        e = e || window.event;
+        var w = $("typer");
+        var tw = from.value;
+        if (!pw){
+            w.innerHTML = nl2br(tw);
+        }
+        }
+
+        function moveIt(count, e) {
+        e = e || window.event;
+        var keycode = e.keyCode || e.which;
+        if (keycode == 37 && parseInt(cursor.style.left) >= (0 - ((count - 1) * 10))) {
+            cursor.style.left = parseInt(cursor.style.left) - 10 + "px";
+        } else if (keycode == 39 && (parseInt(cursor.style.left) + 10) <= 0) {
+            cursor.style.left = parseInt(cursor.style.left) + 10 + "px";
+        }
+        }
+
+        function alert(txt) {
+        console.log(txt);
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        var twitter = "https://x.com/0x_noad";
+        var github = "https://github.com/0x-noad/dkey-poc";
+        var githubUsage = "https://github.com/0x-noad/dkey-demo?tab=readme-ov-file#usage"
+        var email = 'brandnewdev@proton.me';
+
+        info = [
+        "<br>",
+        "Welcome to the DKEY web app explainer! First, some terms...",
+        "<br>",
+        '<span class="index">DKEY (PROTOCOL)</span>     A marketplace for buying & selling decryption keys that give access to files.',
+        '<span class="index">ALICE</span>               The file owner & seller.',
+        '<span class="index">BOB</span>                 Someone paying to access the file.',
+        '<span class="index">$DKEY TOKEN</span>         An ERC20 token on Ethereum. Fees accumulated from ALICEs and BOBs buying and selling',
+        '                    keys are distributed as dividends to token holders.',
+        "<br>",
+        "This webpage is where you -- a token holder -- can manage your $DKEY TOKEN holdings.",
+        "Here, you'll be able to:",
+        '  - check the total token supply',
+        '  - find exchanges where you can buy & sell tokens',
+        '  - check your token balance',
+        '  - see how much the protocol has generated in dividends to date',
+        '  - see your withdrawable dividend balance',
+        '  - withdraw dividends to your wallet (in ETH)',
+        '  - transfer tokens between addresses',
+        "<br>",
+        ];
+
+        social = [
+        "<br>",
+        'twitter        <a href="' + twitter + '" target="_blank">twitter/0x_noad' + '</a>',
+        'github         <a href="' + github + '" target="_blank">github/0x-noad' + "</a>",
+        "<br>"
+        ];
+
+        help = [
+        "<br>",
+        '<span class="command">info</span>           Provides an explanation of the app',
+        '<span class="command">history</span>        View command history',
+        '<span class="command">clear</span>          Clear terminal',
+        '<span class="command">banner</span>         Display the header',
+        '<span class="command">social</span>         Display Noad\'s social networks',
+        '<span class="command">email</span>          Get in touch with Noad',
+        '<span class="command">thanks</span>         Some individuals/orgs Noad would like to thank',
+        "<br>",
+        ];
+
+        banner = [
+        '<span class="index">~~~DKEY~~~                a Noad™ production. 2024. </span>',
+        "           __  __                            _   ",
+        "          /\\ \\/\\ \\                          (D) ",
+        "          \\_\\ \\ \\ \\/'\\      __   __  __      T   ",
+        "          /'_` \\ \\ , <    /'__`\\/\\ \\/\\ \\     |   ",
+        "   0     /\\ \\L\\ \\ \\ \\\\`\\ /\\  __/\\ \\ \\_\\ \\    |K      ",
+        "  /$\\    \\ \\___,_\\ \\_\\ \\_\\ \\____\\\\/`____ \\         ",
+        "   ‖      \\/__,_ /\\/_/\\/_/\\/____/ `/___/> \\       ",
+        "                                     /\\___/          ",
+        "                                     \\/__/          ",
+        '<span class="color2">Welcome to the $DKEY token demo!</span>',
+        "<span class=\"color2\"> <span class=\"index\">***</span> Before getting started, type <span class=\"command\">'setup'</span> <span class=\"index\">***</span></span>",
+        "<span class=\"color2\"> To see where you can buy & sell tokens, type <span class=\"command\">'trade'</span></span>",
+        "<span class=\"color2\"> To check your token balance & withdrawable dividends, type <span class=\"command\">'balance'</span></span>",
+        "<span class=\"color2\"> To see up-to-date stats on price, fees & supply, type <span class=\"command\">'stats'</span></span>",
+        "<span class=\"color2\">For a list of all available commands, type</span> <span class=\"command\">'help'</span>",
+        ];
+
+        congrats = [
+        "<br>",
+        '   _\\/_                                       _\\/_',
+        '   /o\\\\                                       //o\\ ',
+        '    |                      |                    |',
+        '    |     \\0           \\       /                |   ',
+        '    |      $\\            .---.                  |',
+        '   _|______‖___     --  /     \\  --     ________|__',
+        '               `~^~^~^~^~^~^~^~^~^~^~^~`',
+        "<br>"
+        ];
+
+        tokensTransferredAscii = [
+        '   0                                   0    ',
+        "  /$¯¯   ``'-.,_,.-'``'-.,_,.=    $    >\\    ",
+        '   ‖                                    ‖    ',
+        "<br>"
+        ];
+
+        thanks = [
+        "<br>",
+        "Hardly an exhaustive list -- but a huge thanks to some great resources/people/teams",
+        "without whom 'DKEY' would never have been possible.",
+        '• <a href="https://github.com/iden3/circom" target="_blank">circom/iden3' + '</a>',
+        '• <a href="https://agregore.mauve.moe/" target="_blank">agregore/Mauve' + '</a>',
+        '• <a href="https://github.com/Shigoto-dev19/ec-elgamal-circom/tree/ElGamal-Scheme-%2B-Decoding" target="_blank">ec-elgamal-circom/Shigoto-dev19' + '</a>',
+        '• <a href="https://github.com/Roger-Wu/erc1726-dividend-paying-token" target="_blank">dividend paying token/Roger Wu' + '</a>',
+        '• <a href="https://github.com/meixler/web-browser-based-file-encryption-decryption/tree/ec55f1fa9c8c02d8a8048777f67ca77021b9a207" target="_blank">web-browser-based-file-encryption-decryption/meixler' + '</a>',
+        '• <a href="https://fkcodes.com/" target="_blank">terminal-website/ForrestKnight' + '</a>',
+        "Apologies for hacking together pieces of your code in such an unseemly fashion... <3",
+        "<br>",
+        ]
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        function addLine(text, style, time) {
+        var t = "";
+        for (let i = 0; i < text.length; i++) {
+            if (text.charAt(i) == " " && text.charAt(i + 1) == " ") {
+            t += "&nbsp;&nbsp;";
+            i++;
+            } else {
+            t += text.charAt(i);
+            }
+        }
+        setTimeout(function() {
+            var next = document.createElement("p");
+            next.innerHTML = t;
+            next.className = style;
+
+            before.parentNode.insertBefore(next, before);
+
+            window.scrollTo(0, document.body.offsetHeight);
+        }, time);
+        }
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        var before = document.getElementById("before");
+        var liner = document.getElementById("liner");
+        var command = document.getElementById("typer"); 
+        var textarea = document.getElementById("texter"); 
+        var terminal = document.getElementById("terminal");
+
+        var git = 0;
+        var enterDividendContractAddress = false; //
+        var enterToTransferAddress = false; //
+        var enterTransferAmount = false; //
+        let pw = false;
+        let pwd = false;
+        var commands = [];
+        
+        var dividendContractAddress = null;
+        window.dividendContractAddress = dividendContractAddress;
+        var toTransferAddress = null;
+        window.toTransferAddress = toTransferAddress;
+        var transferAmount = null;
+        window.transferAmount = transferAmount;
+
+
+        setTimeout(function() {
+        loopLines(banner, "", 80);
+        textarea.focus();
+        }, 100);
+
+        window.addEventListener("keyup", enterKey);
+
+        //init
+        textarea.value = "";
+        command.innerHTML = textarea.value;
+
+        function enterKey(e) {
+        if (enterDividendContractAddress) {
+            if (command.innerHTML.length > 40 && e.keyCode == 13) {
+                dividendContractAddress = command.innerHTML;
+                command.innerHTML = "";
+                textarea.value = "";
+                enterDividendContractAddress = false;
+                liner.classList.remove("enterDividendContractAddress");
+                addLine("<br>Contract address updated to <span class=\"index\">" + dividendContractAddress + "</span><br>N.B.: Try to avoid reloading the page, as you'll have to input the contract address each time you do.<br>Now, you can enter in any of the commands above to get started!<br>", "color2", 40)
+                connectWallet();
+            }
+        } else if (enterToTransferAddress) {
+            if (command.innerHTML.length > 0 && e.keyCode == 13) {
+                toTransferAddress = command.innerHTML;
+                command.innerHTML = "";
+                textarea.value = "";
+                liner.classList.remove("enterToTransferAddress");
+                enterToTransferAddress = false;
+                enterTransferAmount = true;
+                addLine("Enter the amount of $DKEY tokens you would like to transfer...", "color2", 40);
+                liner.classList.add("enterTransferAmount");
+            }
+        } else if (enterTransferAmount) {
+            if (command.innerHTML.length > 0 && e.keyCode == 13) {
+                transferAmount = command.innerHTML;
+                command.innerHTML = "";
+                textarea.value = "";
+                enterTransferAmount = false;
+                liner.classList.remove("enterTransferAmount");
+                transferDKEYTokens(toTransferAddress, transferAmount)
+            }
+        }
+        else {
+            if (e.keyCode == 13) {
+            commands.push(command.innerHTML);
+            git = commands.length;
+            addLine("user:~$ " + command.innerHTML, "no-animation", 0);
+            commander(command.innerHTML.toLowerCase());
+            command.innerHTML = "";
+            textarea.value = "";
+            }
+            if (e.keyCode == 38 && git != 0) {
+            git -= 1;
+            textarea.value = commands[git];
+            command.innerHTML = textarea.value;
+            }
+            if (e.keyCode == 40 && git != commands.length) {
+            git += 1;
+            if (commands[git] === undefined) {
+                textarea.value = "";
+            } else {
+                textarea.value = commands[git];
+            }
+            command.innerHTML = textarea.value;
+            }
+        }
+        }
+
+        function commander(cmd) {
+        switch (cmd.toLowerCase()) {
+            case "help":
+            loopLines(help, "color2 margin", 80);
+            break;
+            case "info":
+            loopLines(info, "color2 margin", 80);
+            break;
+            case "social":
+            loopLines(social, "color2 margin", 80);
+            break;
+            case "history":
+            addLine("<br>", "", 0);
+            loopLines(commands, "color2", 80);
+            addLine("<br>", "command", 80 * commands.length + 50);
+            break;
+            case "email":
+            addLine('Opening mailto:<a href="mailto:brandnewdev@proton.me">brandnewdev@proton.me</a>...', "color2", 80);
+            newTab(email);
+            break;
+            case "clear":
+            setTimeout(function() {
+                terminal.innerHTML = '<a id="before"></a>';
+                before = document.getElementById("before");
+            }, 1);
+            break;
+            case "banner":
+            loopLines(banner, "", 80);
+            break;
+            case "thanks":
+            loopLines(thanks, "color2", 80);
+            break;
+
+            /////// 
+            case "setup":
+            enterDividendContractAddress = true;
+            addLine('For an exhaustive run-down of how to set up a local blockchain, deploy the contracts, <br>get MetaMask set up, etc... click <a href="' + githubUsage + '" target="_blank">HERE</a>.', "color2", 10);
+            addLine("Once that's all done, enter the blockchain address of the DividendPayingToken.sol contract...", "color2", 40);
+            liner.classList.add("enterDividendContractAddress");
+            break;
+            case "trade": // TODO: add uniswap + etc links
+            addLine("<br>*** COMING SOON: A list of DEXs where you can buy $DKEY ***<br><br>", "inherit", 40);
+            break;
+            case "balance":
+            updateBalance()
+            break;
+            case "stats":
+            seeDKEYTokenInfo()
+            break;
+            case "transfer":
+            enterToTransferAddress = true;
+            addLine("Enter the address of the person you would like to transfer $DKEY tokens to...", "color2", 40);
+            liner.classList.add("enterToTransferAddress");
+            break;
+            //////////////////////
+
+            case "github":
+            addLine("Opening GitHub...", "color2", 0);
+            newTab(github);
+            break;
+            default:
+            addLine("<span class=\"inherit\">Command not found. For a list of commands, type <span class=\"command\">'help'</span>.</span>", "error", 100);
+            break;
+        }
+        }
+
+        function newTab(link) {
+        setTimeout(function() {
+            window.open(link, "_blank");
+        }, 500);
+        }
+
+
+        function loopLines(name, style, time) {
+        name.forEach(function(item, index) {
+            addLine(item, style, index * time);
+        });
+        }
+
+        function loopLinesPromise(name, style, time) {
+            return new Promise((resolve) => {
+                const promises = name.map((item, index) => addLinePromise(item, style, index * time));
+                Promise.all(promises).then(() => resolve());
+            });
+        }
+
+        function addLinePromise(text, style, time) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+            addLine(text, style, 0); 
+            resolve();
+            }, time);
+        });
+        }
+
+    </script>
+  </body>
+</html>
+
+
+
+
