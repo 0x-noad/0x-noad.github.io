@@ -94,6 +94,9 @@ p {
 .margin {
   margin-left: 20px;
 }
+.no-click {
+  pointer-events: none;
+}
 .flush-left {
   display: block;
   margin-left: 0;
