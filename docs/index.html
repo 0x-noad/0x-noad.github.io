@@ -74,8 +74,8 @@
 
         var twitter = "https://x.com/0x_noad";
         var github = "https://github.com/0x-noad";
-        var farcaster = "https://warpcast.com/noad";
-        var email = 'brandnewdev@proton.me';
+        var farcaster = "https://farcaster.xyz/@noad";
+        var email = 'noad@dkey.app';
 
         info = [
         "<br>",
@@ -115,7 +115,7 @@
         "<br>",
         'twitter        <a href="' + twitter + '" target="_blank">twitter/0x_noad' + '</a>',
         'github         <a href="' + github + '" target="_blank">github/0x-noad' + "</a>",
-        'farcaster      <a href="' + farcaster + '" target="_blank">warpcast/@noad' + "</a>",
+        'farcaster      <a href="' + farcaster + '" target="_blank">farcaster/@noad' + "</a>",
         "<br>"
         ];
 
@@ -478,9 +478,42 @@
         
         var aesKey = null;
 
+        // Function to handle URL parameters and display banner + specified array
+        function handleUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const arrayParam = urlParams.get('arr');
+            
+            if (arrayParam) {
+                // Map URL parameter to actual array variable
+                const arrayMap = {
+                    'tokenDetails': tokenDetails,
+                    'help': help,
+                    'info': info,
+                    'social': social,
+                    'thanks': thanks
+                };
+                
+                const targetArray = arrayMap[arrayParam];
+                
+                if (targetArray) {
+                    // First loopLinesPromises the banner
+                    loopLinesPromise(banner, "", 80).then(() => {
+                        // Then loopLines the specified array
+                        loopLines(targetArray, "color2 margin", 80);
+                    });
+                } else {
+                    // If array not found, just show banner
+                    loopLines(banner, "", 80);
+                }
+            } else {
+                // No URL param, show banner normally
+                loopLines(banner, "", 80);
+            }
+            textarea.focus();
+        }
+
         setTimeout(function() {
-        loopLines(banner, "", 80);
-        textarea.focus();
+            handleUrlParams();
         }, 100);
 
         window.addEventListener("keyup", enterKey);
@@ -766,7 +799,7 @@
             addLine("<br>", "command", 80 * commands.length + 50);
             break;
             case "email":
-            addLine('<br><a href="mailto:brandnewdev@proton.me">brandnewdev@proton.me</a><br><br>', "color2", 80);
+            addLine('<br><a href="mailto:' + email + '">' + email + '</a><br><br>', "color2", 80);
             break;
             case "clear":
             setTimeout(function() {
