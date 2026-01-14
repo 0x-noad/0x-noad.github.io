@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+  
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>$DKEY</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+    <link rel="icon" type="image/x-icon" href="key.png" />
+  </head>
+  <body>
+    <div id="terminal">
+      <a id="before"></a>
+    </div>
+    <div id="command" onclick="$('texter').focus();">
+      <textarea
+        type="text"
+        id="texter"
+        onkeyup="typeIt(this, event)"
+        onkeydown="typeIt(this, event); 
+                   moveIt(this.value.length, event)"
+        onkeypress="typeIt(this, event);"
+        autofocus
+      ></textarea>
+      <div id="liner">
+        <span id="typer"></span><b class="cursor" id="cursor">█</b>
+      </div>
+    </div>
+    <div class="fullscreen-dropzone" id="dropzone"></div>
+    <!-- Load @noble/hashes from CDN for elgamal dependencies -->
+    <script type="importmap">
+    {
+      "imports": {
+        "@noble/hashes/sha256": "https://esm.sh/@noble/hashes@1.3.3/sha256",
+        "@noble/hashes/hmac": "https://esm.sh/@noble/hashes@1.3.3/hmac",
+        "@noble/hashes/utils": "https://esm.sh/@noble/hashes@1.3.3/utils"
+      }
+    }
+    </script>
+    <script type="module">
+        // Import dkey-lib as ES module
+        import { DkeyUserProfile } from './dkey-lib/index.js';
+        
+        // Make it available globally for the rest of the script
+        window.DkeyUserProfile = DkeyUserProfile;
+        
+        let dkeyLoadError = null;
+        if (!DkeyUserProfile) {
+            dkeyLoadError = "Failed to load DkeyUserProfile from dkey-lib/index.js";
+            console.error("DkeyUserProfile not found");
+        }
+
+        // style/functions stolen from https://fkcodes.com/
+        function $(elid) {
+            return document.getElementById(elid);
+        }
+        window.$ = $;
+        
+        var cursor;
+        window.onload = init;
+
+        function init() {
+        cursor = $("cursor");
+        cursor.style.left = "0px";
+        }
+
+        function nl2br(txt) {
+        return txt.replace(/\n/g, '');
+        }
+
+        function typeIt(from, e) {
+        e = e || window.event;
+        var w = $("typer");
+        var tw = from.value;
+        if (!pw){
+            w.innerHTML = nl2br(tw);
+        }
+        }
+        window.typeIt = typeIt;
+
+        function moveIt(count, e) {
+        e = e || window.event;
+        var keycode = e.keyCode || e.which;
+        if (keycode == 37 && parseInt(cursor.style.left) >= (0 - ((count - 1) * 10))) {
+            cursor.style.left = parseInt(cursor.style.left) - 10 + "px";
+        } else if (keycode == 39 && (parseInt(cursor.style.left) + 10) <= 0) {
+            cursor.style.left = parseInt(cursor.style.left) + 10 + "px";
+        }
+        }
+        window.moveIt = moveIt;
+
+        function alert(txt) {
+        console.log(txt);
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        var banner = [
+
+        "   0     ",
+        "   /b\\    ",
+        "   ‖     ",
+        "<br>",
+        "<span id=\"paste-profile\" style=\"cursor: pointer; text-decoration: underline; color: #9C8394;\">[click to paste profile data]</span>"
+        ];
+
+        var keyGuy = [
+          '       _          ',    
+          '      (D)  0       ',
+          "        T ¯¯B\\       ",
+          '       |   ‖       ',
+          '        |K          ',
+          '<br>'
+        ];
+
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        var before = document.getElementById("before");
+        var liner = document.getElementById("liner");
+        var command = document.getElementById("typer"); 
+        var textarea = document.getElementById("texter"); 
+        var terminal = document.getElementById("terminal");
+
+        var git = 0;
+        let pw = false;
+        let pwd = false;
+        var commands = [];
+
+        setTimeout(function() {
+        loopLines(banner, "", 10);
+        textarea.focus();
+        }, 100);
+
+        //init
+        textarea.value = "";
+        command.innerHTML = textarea.value;
+
+        function newTab(link) {
+        setTimeout(function() {
+            window.open(link, "_blank");
+        }, 500);
+        }
+
+        function addLine(text, style, time) {
+        var t = "";
+        for (let i = 0; i < text.length; i++) {
+            if (text.charAt(i) == " " && text.charAt(i + 1) == " ") {
+            t += "&nbsp;&nbsp;";
+            i++;
+            } else {
+            t += text.charAt(i);
+            }
+        }
+        setTimeout(function() {
+            var next = document.createElement("p");
+            next.innerHTML = t;
+            next.className = style;
+
+            before.parentNode.insertBefore(next, before);
+
+            window.scrollTo(0, document.body.offsetHeight);
+        }, time);
+        }
+
+        function loopLines(name, style, time) {
+        name.forEach(function(item, index) {
+            addLine(item, style, index * time);
+        });
+        }
+
+        // Handle profile data paste and DKEY display
+        async function handleProfilePaste() {
+            try {
+                if (!DkeyUserProfile) {
+                    addLine("Error: dkey-lib not loaded. Please ensure dkey-lib is built to JavaScript.", "error", 100);
+                    return;
+                }
+
+                // Read from clipboard automatically
+                const profileData = await navigator.clipboard.readText();
+                if (!profileData) {
+                    addLine("No data found in clipboard.", "error", 100);
+                    return;
+                }
+
+                // Deserialize the profile (config can be null since we're not doing blockchain operations)
+                const profile = DkeyUserProfile.deserialize(profileData, null);
+
+                // Collect all DKEYs from all chains
+                const allDKeys = [];
+                Object.keys(profile.myDKeys).forEach(chainId => {
+                    Object.keys(profile.myDKeys[chainId]).forEach(ipfsCID => {
+                        allDKeys.push(profile.myDKeys[chainId][ipfsCID]);
+                    });
+                });
+
+                if (allDKeys.length === 0) {
+                    addLine("No DKEYs found in this profile data.", "error", 100);
+                    return;
+                }
+
+                // Clear the screen
+                const terminal = document.getElementById("terminal");
+                const before = document.getElementById("before");
+                while (before.previousSibling) {
+                    terminal.removeChild(before.previousSibling);
+                }
+
+                loopLines(keyGuy, "", 10);
+
+                // Display each DKEY
+                allDKeys.forEach((dkey, index) => {
+                    const fileName = dkey.fileName || `file_${dkey.ipfsCID.slice(0, 8)}`;
+                    const linkText = `<a href="#" class="dkey-link" data-ipfs-cid="${dkey.ipfsCID}" data-dkey-index="${index}">${fileName}</a>`;
+                    addLine(linkText, "inherit", 80);
+                });
+
+                // Store DKEYs globally for download handler
+                window.dkeyObjects = allDKeys;
+
+                // Attach click handlers to DKEY links
+                setTimeout(() => {
+                    document.querySelectorAll('.dkey-link').forEach(link => {
+                        link.addEventListener('click', async (e) => {
+                            e.preventDefault();
+                            const ipfsCID = link.getAttribute('data-ipfs-cid');
+                            const dkeyIndex = parseInt(link.getAttribute('data-dkey-index'));
+                            const dkey = window.dkeyObjects[dkeyIndex];
+                            
+                            await downloadAndDecryptFile(ipfsCID, dkey);
+                        });
+                    });
+                }, allDKeys.length * 50 + 100);
+
+            } catch (error) {
+                console.error("Error processing profile data:", error);
+                addLine("Error: " + error.message, "error", 100);
+            }
+        }
+
+        async function downloadAndDecryptFile(ipfsCID, dkey) {
+            try {
+                // Fetch encrypted file from gateway
+                const encryptedFileUrl = `https://ipfs.io/ipfs/${ipfsCID}/encrypted_file.enc`;
+                const encryptedResponse = await fetch(encryptedFileUrl);
+                if (!encryptedResponse.ok) {
+                    throw new Error(`Failed to fetch encrypted file (status ${encryptedResponse.status})`);
+                }
+                const encryptedBuffer = await encryptedResponse.arrayBuffer();
+
+                // Decrypt the file using the DKey instance
+                const decryptedBytes = await dkey.decryptFile(encryptedBuffer);
+                
+                // Create blob and download
+                const blob = new Blob([decryptedBytes]);
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = dkey.fileName || `decrypted_${ipfsCID.slice(0, 8)}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+            } catch (error) {
+                console.error("Error downloading/decrypting file:", error);
+                addLine("Error: " + error.message, "error", 100);
+            }
+        }
+
+        // Make paste profile text clickable after banner loads
+        setTimeout(function() {
+            const pasteProfile = document.getElementById("paste-profile");
+            if (pasteProfile) {
+                pasteProfile.addEventListener('click', handleProfilePaste);
+            }
+            
+            // Show error if dkey-lib failed to load
+            if (dkeyLoadError) {
+                addLine("Error: " + dkeyLoadError, "error", 100);
+            }
+        }, banner.length * 10 + 200);
+    </script>
+  </body>
+</html>
