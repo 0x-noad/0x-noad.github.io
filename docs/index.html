@@ -77,6 +77,7 @@
         var farcaster = "https://farcaster.xyz/noad";
         var npm = "https://www.npmjs.com/package/dkey-lib";
         var email = 'noad@dkey.app';
+        var webAppCid = "QmUg15vD8huJHqBjgjHQmywAfJkVaMNPd7CXTY37XnpHfx";
 
         info = [
         "<br>",
@@ -114,11 +115,14 @@
 
         app = [
             "<br>",
-            "<span class=\"color2\">CURRENT DEPLOYMENTS:</span>",
+            "<span class=\"underlined\">CURRENT DEPLOYMENTS:</span>",
             "•   <a href=\"https://ipfs.io/ipfs/QmUg15vD8huJHqBjgjHQmywAfJkVaMNPd7CXTY37XnpHfx/\" target=\"_blank\">DKEY Web App on IPFS</a> (Network: Arbitrum)",
             "•   <a href=\"https://farcaster.xyz/~/mini-apps/launch?domain=dkey-miniapp.vercel.app\" target=\"_blank\">DKEY Miniapp on Farcaster</a> (Network: Base)",
             "<br>",
-            "We recommend using the IPFS Web App with <a href=\"https://freedombrowser.eth.limo/\" target=\"_blank\">Freedom Browser</a> for a truly peer-to-peer, local-first experience.",
+            "------------------------------------------------------------------------------------------------------------------------------------------------------------",
+            "<br>",
+            "<span class=\"color2\">Using the IPFS Web App with <a href=\"https://freedombrowser.eth.limo/\" target=\"_blank\">Freedom Browser</a> provides a truly peer-to-peer, local-first experience. To get started, configure your Kubo (IPFS CLI) instance:</span>",
+            "<span class=\"codeblock\">##1.   Install Kubo: <br>brew install kubo                     (Mac)<br>winget install ProtocolLabs.IPFS      (Windows) <br><br>##2.   Allow the app (by default, Freedom serves on 8080) to talk to your IPFS node:<br>ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '[\"http://127.0.0.1:8080\", \"http://localhost:8080\"]'<br>ipfs config --json Gateway.HTTPHeaders.Access-Control-Allow-Origin '[\"http://127.0.0.1:8080\", \"http://localhost:8080\"]'<br><br>##3.   Start the IPFS daemon:<br>ipfs daemon</span><br><br>Now you can open Freedom Browser</a>, and load the Web App by pasting in its IPFS CID (" + webAppCid + ") <br>and hitting [ENTER]. With your IPFS node running, the app will be able to pin (during Listing creation) & fetch (when viewing <br>Listings & downloading encrypted files) directly to & from IPFS.",
             "<br>",
         ];
 
