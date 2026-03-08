@@ -332,6 +332,54 @@
             "<br>",
         ]
 
+        pitchArray = [
+            ["<br>", "there's a problem with buying & selling files today: a poor incentive landscape for users", "<br>"],
+            ["<br>", "web2 file marketplaces take 10-30% on each sale... <br>sellers don't have control over sales & royalties... <br>buyers aren't provided true ownership of their files...", "<br>"],
+            ["<br>", "luckily there's DKEY! a new p2p, web3-native protocol for buying & selling decryption keys for files <br>--it's a more user-friendly alternative to today's marketplaces", "<br>"],
+            ["<br>", "the DKEY protocol (as implemented by the smart contracts and library) allows new web3 marketplaces to replace extractive web2 incumbents <br>--i.e.: blockchain-native versions of Onlyfans, Substack, Gumroad, Spotify, etc", "<br>"],
+            ["<br>", "DKEY leverages the security of (i) the blockchain, (ii) IPFS, and (iii) fancy cryptography to enable users to transact WITHOUT intermediaries.", "<br>"],
+            ["<br>", "as users transact, a 1% protocol fee is levied against the seller & distributed to holders of the $DKEY token", "<br>"],
+            ["<br>", "since DKEYs are scarce & have the ability to be re-sold, they become a new class of trade-able asset", "<br>"],
+            ["<br>", "as such, the DKEY protocol creates a favorable incentive landscape for its users: <br>• file sellers profit from primary & secondary sales on their listing <br>• DKEY sellers keep more of their revenue due to lower transaction fees <br>• buyers & sellers benefit from the potential for price-speculation on DKEYs <br>• holders of the $DKEY token benefit from participation & promotion of the protocol", "<br>"],
+            ["<br>", "thanks for reading <3 <br>look around the rest of this site for more info, and how you can try DKEY out today! <br>-noad", "<br>"],
+        ];
+
+        pitchAsciiArray = [
+            ["..."],
+            ["..."],
+            [        "           __  __                            _   ",
+        "          /\\ \\/\\ \\                          (D) ",
+        "          \\_\\ \\ \\ \\/'\\      __   __  __      T   ",
+        "          /'_` \\ \\ , <    /'__`\\/\\ \\/\\ \\     |   ",
+        "   0     /\\ \\L\\ \\ \\ \\\\`\\ /\\  __/\\ \\ \\_\\ \\    |K      ",
+        "  /$\\    \\ \\___,_\\ \\_\\ \\_\\ \\____\\\\/`____ \\         ",
+        "   ‖      \\/__,_ /\\/_/\\/_/\\/____/ `/___/> \\       ",
+        "                                     /\\___/          ",
+        "                                     \\/__/          ",],
+            ["..."],
+            ["..."],
+            ["..."],
+            ['    _       _       _       _       _',
+            '   (A)     (B)     (C)     (D)     (E)             ',
+            '    T       T       T       T       T        ',
+            "    |       |       |       |       |        ",
+            '    |K      |K      |K      |K      |K      ',],
+            ['   _\\/_                                            _\\/_',
+            '   /o\\\\                                            //o\\ ',
+            '    |                          |                     |',
+            '    |     \\0~   0/         \\       /          0/     |   ',
+            '    |      A\\  /B            .---.           /$      |',
+            '   _|______‖____‖__     --  /     \\  --     __‖______|__',
+            '                   `~^~^~^~^~^~^~^~^~^~^~^~`',],
+            ["..."],
+        ];
+
+        pitchEnd = [
+            "<br>",
+            "Hit <span class=\"command\">[BACKSPACE]</span> to return to the top.",
+            "<br>",
+        ];
+
         tokenDetails = [
             "<br>",
             "<span class=\"color2 underlined\">CONTRACT DETAILS:</span>",
@@ -438,6 +486,8 @@
         var git = 0;
         var infoSequence = false;
         var infoStep = 0;
+        var pitchSequence = false;
+        var pitchStep = 0;
         var enterPassword = false;
         var returnToTop = false;
         var arrowKeysToTriggerScrolling = false;
@@ -489,6 +539,7 @@
         ////
 
         const infoSteps = 8;
+        const pitchSteps = 9;
         let pw = false;
         let pwd = false;
         var commands = [];
@@ -498,6 +549,17 @@
         // Function to handle URL parameters and display banner + specified array
         function handleUrlParams() {
             const urlParams = new URLSearchParams(window.location.search);
+            const sectionParam = urlParams.get('section');
+            if (sectionParam === 'productPitch') {
+                terminal.innerHTML = '<a id="before"></a>';
+                before = document.getElementById("before");
+                addLine("DKEY PITCH <br>___________________________________________________________________________________________________________________________________________________", "green", 80);
+                liner.classList.add("infoSteps");
+                pitchSequence = true;
+                pitchStep = 0;
+                textarea.focus();
+                return;
+            }
             const arrayParam = urlParams.get('arr');
             
             if (arrayParam) {
@@ -556,6 +618,23 @@
                     infoSequence = false;
                     returnToTop = true;
                     infoStep = 0;
+                }
+            }
+        } else if (pitchSequence) {
+            if (e.keyCode == 13) {
+                command.innerHTML = "";
+                textarea.value = "";
+                if (pitchStep != pitchSteps) {
+                    loopLinesPromise(pitchArray[pitchStep], "color2 margin", 80).then(() => {
+                        loopLines(pitchAsciiArray[pitchStep], "greyish", 80);
+                        pitchStep += 1;
+                    });
+                } else {
+                    loopLines(pitchEnd, "color2 margin", 80);
+                    liner.classList.remove("infoSteps");
+                    pitchSequence = false;
+                    returnToTop = true;
+                    pitchStep = 0;
                 }
             }
         } else if (startDetails) {
